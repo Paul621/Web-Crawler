@@ -1,0 +1,16 @@
+# -*- coding: utf-8 -*-
+from bs4 import BeautifulSoup
+import requests
+
+res = requests.get('http://jingyan.baidu.com/article/fd8044faca4cd75031137ac8.html')
+# print (res.text)
+soup = BeautifulSoup(res.text,'lxml')
+
+#文字
+#for sou in soup.select('.content-list-text'):
+#    print (sou.text.strip())
+
+#图片        
+#for pic in soup.select('.exp-image-default'):
+#    print (pic['data-src'])
+    
