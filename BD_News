@@ -1,0 +1,49 @@
+import time
+import requests 
+import pandas as pd
+from bs4 import BeautifulSoup 
+
+class New:
+    def __init__(self):
+        self.time = 0
+        self.title = 0
+        self.url = 0
+        self.count = 0
+        
+    def Gettime(self):
+        nowtime = time.time() 
+        time_local = time.localtime(nowtime)
+        self.time = time.strftime("%Y-%m-%d %H:%M:%S",time_local)
+        
+    def Geturl(self,url):
+        res = requests.get(url)
+        res.coding = 'utf-8'
+        
+        soup = BeautifulSoup(res.text,'lxml')
+        for sou in soup.select('#pane-news'):
+            for so in sou('a'):
+                self.count += 1
+                self.title = so.text
+                self.url = so['href']
+#                print (self.title,self.url)
+  
+    def Puturl(self):
+#        df = pd.DataFrame()
+#        print ('Save date ...')
+#        df.to_csv('test.csv',encoding='utf-8-sig')
+#        for i in self.count:
+#        pd = pd.read_csv('test.csv')
+        daa = pd.DataFrame([[self.title,self.url]],columns=['title','url'])
+        print (daa)
+        
+    def start(self,url):
+#        self.Gettime()
+        self.Geturl(url)
+        self.Puturl()
+#        print ("=======================================================================")
+#        print ("新闻时间：" + str(self.time) + " 新闻总数：" + str(self.count) + "条")
+        
+        
+module = New()
+module.start('http://news.baidu.com/')
+    
