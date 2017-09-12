@@ -25,7 +25,7 @@ class New:
                 self.count += 1
                 self.title = so.text
                 self.url = so['href']
-#                print (self.title,self.url)
+#                print 'title: {0} url: {1}'.format(self.title.encode('utf-8'),self.url.encode('utf-8'))
   
     def Puturl(self):
 #        df = pd.DataFrame()
