@@ -1,8 +1,14 @@
+#!/usr/bin/python3
+
 import time
 import requests 
 import pandas as pd
 from bs4 import BeautifulSoup 
 
+inforlist = []
+titlelist = []
+urllist   = []
+        
 class New:
     def __init__(self):
         self.time = 0
@@ -14,34 +20,43 @@ class New:
         nowtime = time.time() 
         time_local = time.localtime(nowtime)
         self.time = time.strftime("%Y-%m-%d %H:%M:%S",time_local)
+        inforlist.append(str(self.time))
         
-    def Geturl(self,url):
+#   搜寻title和url   
+    def Geturl(self,url):   
+        
         res = requests.get(url)
         res.coding = 'utf-8'
-        
         soup = BeautifulSoup(res.text,'lxml')
+        
         for sou in soup.select('#pane-news'):
             for so in sou('a'):
                 self.count += 1
                 self.title = so.text
                 self.url = so['href']
-#                print 'title: {0} url: {1}'.format(self.title.encode('utf-8'),self.url.encode('utf-8'))
-  
+#                print ('title:{0}\nurl:{1}'.format(self.title,self.url))
+                self.Listurl()        
+              
+#   构建list列表    
+    def Listurl(self):
+        titlelist.append(self.title)
+        urllist.append(self.url.strip())   
+#   数据保存在csv格式的本地文件中             
     def Puturl(self):
-#        df = pd.DataFrame()
-#        print ('Save date ...')
-#        df.to_csv('test.csv',encoding='utf-8-sig')
-#        for i in self.count:
-#        pd = pd.read_csv('test.csv')
-        daa = pd.DataFrame([[self.title,self.url]],columns=['title','url'])
-        print (daa)
+        df1 = pd.DataFrame(titlelist,columns=['title'])
+        df2 = pd.DataFrame(urllist,columns=['url'])
+        df1.append(inforlist, ignore_index=True)
+        df1['url']=df2
+        df1.to_csv('test.csv',encoding='utf-8-sig')
+        print (df1)
         
+#   主函数        
     def start(self,url):
-#        self.Gettime()
+        self.Gettime()
         self.Geturl(url)
         self.Puturl()
-#        print ("=======================================================================")
-#        print ("新闻时间：" + str(self.time) + " 新闻总数：" + str(self.count) + "条")
+        print ("=======================================================================")
+        print ("新闻时间：" + str(self.time) + " 新闻总数：" + str(self.count) + "条")
         
         
 module = New()
