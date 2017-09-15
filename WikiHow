@@ -1,0 +1,33 @@
+import os,re,requests
+from bs4 import BeautifulSoup  
+
+
+baseurl = 'http://www.wikihow.com/Main-Page'
+
+class new():  
+    def getImg(self):
+        imgPath = 'Pic/'  
+        if not os.path.exists(imgPath):  
+            os.makedirs(imgPath)  
+            
+        res = requests.get(baseurl)
+        res.encode = 'utf-8'
+        soup = BeautifulSoup(res.text,'lxml')
+        for url in soup.select('.image_map')[0]:
+            for ur in url:
+                print (ur)
+#            for i in range(0, len(imgURLList)):  
+#                if 'http://imgsrc.baidu.com/forum/w%3D580/sign=' in imgURLList[i]:  
+#                    start = string.find(imgURLList[i], 'http')  
+#                    end = string.find(imgURLList[i], '.jpg') + 4  
+#                    imgList.append(imgURLList[i][start : end])  
+#        x = 1  
+#        for img in imgList:  
+#            urllib.urlretrieve(img, 'Pic:/craw_tieba/%s.jpg' % x)  
+#            x += 1  
+           
+#    def start(self):
+#        self.getImg()
+        
+test = new()
+test.getImg()
