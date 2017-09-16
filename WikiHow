@@ -1,33 +1,48 @@
-import os,re,requests
+import os,requests
+import pandas as pd
 from bs4 import BeautifulSoup  
 
-
-baseurl = 'http://www.wikihow.com/Main-Page'
-
-class new():  
-    def getImg(self):
-        imgPath = 'Pic/'  
-        if not os.path.exists(imgPath):  
-            os.makedirs(imgPath)  
-            
-        res = requests.get(baseurl)
+class WikiHow:
+    
+    def __init__(self):
+        self.pic_urlslist = []
+        self.href_urlslist = []
+        
+        
+    #抓取url
+    def GetUrl(self,html):
+        res = requests.get(html)
         res.encode = 'utf-8'
         soup = BeautifulSoup(res.text,'lxml')
-        for url in soup.select('.image_map')[0]:
-            for ur in url:
-                print (ur)
-#            for i in range(0, len(imgURLList)):  
-#                if 'http://imgsrc.baidu.com/forum/w%3D580/sign=' in imgURLList[i]:  
-#                    start = string.find(imgURLList[i], 'http')  
-#                    end = string.find(imgURLList[i], '.jpg') + 4  
-#                    imgList.append(imgURLList[i][start : end])  
-#        x = 1  
-#        for img in imgList:  
-#            urllib.urlretrieve(img, 'Pic:/craw_tieba/%s.jpg' % x)  
-#            x += 1  
-           
-#    def start(self):
-#        self.getImg()
         
-test = new()
-test.getImg()
+        #得到pic的url
+        pics = soup.find_all('img')
+        for pic in pics:
+            picurl = pic.get('data-src')
+            #去除url为空的部分
+            if picurl is None:
+                continue
+            else:
+                self.pic_urlslist.append(picurl.split(' ')[0])
+        
+        #得到链接地址url
+        for hrefsurl in soup.select('.image_map'):
+            herfurl = hrefsurl('a')[0]['href']
+            self.href_urlslist.append(herfurl[2:].split(' ')[0])
+ 
+    #保存url
+    def SaveUrl(self):           
+        df1 = pd.DataFrame(self.pic_urlslist,columns=['pic'])
+        df2 = pd.DataFrame(self.href_urlslist,columns=['url'])
+        df1['url'] = df2
+        df1.to_csv('test.csv',encoding='utf-8-sig')
+        print 'OK'
+        
+    def start(self):
+        baseurl = 'http://www.wikihow.com/Main-Page'
+        self.GetUrl(baseurl)
+        self.SaveUrl()
+        
+        
+test = WikiHow()
+test.start()
