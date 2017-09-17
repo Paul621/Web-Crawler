@@ -1,0 +1,16 @@
+import requests
+import pandas as pd
+from bs4 import BeautifulSoup 
+infor = []
+
+BaseUrl = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+html = requests.get(BaseUrl)
+html.encoding = 'utf-8'
+soup = BeautifulSoup(html.text,'lxml')
+
+for tr in soup.findAll('tr')[1:-1]:  
+    for td in tr.findAll('td'):  
+        infor.append(td.text)
+df = pd.DataFrame(infor)
+df.to_csv('record.csv',encoding = 'utf-8-sig')
+print 'ok'
