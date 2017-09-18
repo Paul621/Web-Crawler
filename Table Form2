@@ -1,0 +1,35 @@
+import requests
+import pandas as pd
+from lxml import etree
+from bs4 import BeautifulSoup 
+
+All = []
+Code_sch = []
+Code_maj = []
+Name_maj = []
+Subj_maj = []
+Num_plan = []
+Num_act = []
+Num_in = []
+Score = []
+
+flag = True
+count = 0
+
+while True: 
+    BaseUrl = 'http://yzb.zuel.edu.cn/4637/list%s.htm'%count
+    html = requests.get(BaseUrl)
+    html.encoding = 'utf-8'
+
+    soup = BeautifulSoup(html.text,'lxml')
+    sou = soup.select('.Article_PublishDate')       
+    print sou
+        
+      
+    if sou == None:
+        print 'outof'
+        break
+    else:
+        count += 1 
+    print count   
+    
