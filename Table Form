@@ -1,16 +1,62 @@
 import requests
 import pandas as pd
+from lxml import etree
 from bs4 import BeautifulSoup 
-infor = []
 
-BaseUrl = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+All = []
+Code_sch = []
+Code_maj = []
+Name_maj = []
+Subj_maj = []
+Num_plan = []
+Num_act = []
+Num_in = []
+Score = []
+
+BaseUrl = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
 html = requests.get(BaseUrl)
 html.encoding = 'utf-8'
-soup = BeautifulSoup(html.text,'lxml')
 
+soup = BeautifulSoup(html.text,'lxml')
 for tr in soup.findAll('tr')[1:-1]:  
     for td in tr.findAll('td'):  
-        infor.append(td.text)
-df = pd.DataFrame(infor)
-df.to_csv('record.csv',encoding = 'utf-8-sig')
-print 'ok'
+        All.append(td.text)
+        
+i = 0
+for info in All:
+    i += 1
+    if i == 1:
+        Code_sch.append(info)
+    elif i == 2:
+        Code_maj.append(info)
+    elif i == 3:
+        Name_maj.append(info)
+    elif i == 4:
+        Subj_maj.append(info)
+    elif i == 5:
+        Num_plan.append(info)
+    elif i == 6:
+        Num_act.append(info)
+    elif i == 7:
+        Num_in.append(info)
+    elif i == 8:
+        Score.append(info)
+    i = i%8
+#组成数据帧    
+df1 = pd.DataFrame(Code_sch,columns=['学院代码'])
+df2 = pd.DataFrame(Code_maj,columns=['专业代码'])
+df3 = pd.DataFrame(Name_maj,columns=['专业名称'])
+df4 = pd.DataFrame(Subj_maj,columns=['研究方向'])
+df5 = pd.DataFrame(Num_plan,columns=['报考'])
+df6 = pd.DataFrame(Num_act,columns=['录取(含推免）'])
+df7 = pd.DataFrame(Num_in,columns=['推免'])
+df8 = pd.DataFrame(Score,columns=['复试分数线'])
+#插入表格
+df1['专业代码']=df2
+df1['专业名称']=df3
+df1['研究方向']=df4
+df1['报考']=df5
+df1['录取(含推免）']=df6
+df1['推免']=df7
+df1['复试分数线']=df8
+df1.to_csv('record_2017.csv',encoding='utf-8-sig')
