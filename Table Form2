@@ -1,35 +1,33 @@
 import requests
 import pandas as pd
-from lxml import etree
 from bs4 import BeautifulSoup 
 
-All = []
-Code_sch = []
-Code_maj = []
-Name_maj = []
-Subj_maj = []
-Num_plan = []
-Num_act = []
-Num_in = []
-Score = []
+BaseUrl = 'xxxxxxxxxxx'
 
-flag = True
-count = 0
+count = 1
+links = []
+docs = []
 
-while True: 
-    BaseUrl = 'http://yzb.zuel.edu.cn/4637/list%s.htm'%count
-    html = requests.get(BaseUrl)
+while True:
+    Url = BaseUrl+'/4637/list%s.htm'%count
+
+    html = requests.get(Url)
     html.encoding = 'utf-8'
 
     soup = BeautifulSoup(html.text,'lxml')
-    sou = soup.select('.Article_PublishDate')       
-    print sou
-        
-      
-    if sou == None:
-        print 'outof'
+    for sou in soup.select('.Article_Title'):       
+        for so in sou('a'):
+            s = BaseUrl+so['href']
+            links.append(s) 
+
+            docs.append(so.text)
+    count += 1
+    if count > 2:
         break
-    else:
-        count += 1 
-    print count   
+        
+df1 = pd.DataFrame(links)
+df2 = pd.DataFrame(docs,columns = ['年份查询'])
+df2['链接地址'] = df1
+df2.to_csv('MainPage.csv',encoding='utf-8-sig')
+print 'Save successful'
     
